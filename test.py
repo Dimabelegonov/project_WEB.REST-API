@@ -1,41 +1,35 @@
-from requests import get, post, delete
+from requests import get, post, delete, put
 
-print(post('http://localhost:8000/api/jobs',
-           json={'team_leader': 'Nick',
-                 'job': 'do home work',
-                 'work_size': 150,
-                 'collaborators': "1, 3, 4",
-                 'is_finished': False}).json())
+print(get('http://localhost:8000/api/users').json())
 
-print(post('http://localhost:8000/api/jobs',
-           json={'team_leader': 'Nick',
-                 'job': 'do home work',
-                 'work_size': 150,
-                 'collaborators': "1, 3, 4",
-                 'is_finished': False}).json())
+print(delete('http://localhost:8000/api/users/1').json())
 
-print(post('http://localhost:8000/api/jobs',
-           json={'team_leader': 'Nick',
-                 'job': 'do home work',
-                 'work_size': 150,
-                 'collaborators': "1, 3, 4",
-                 'is_finished': False}).json())
+print(get('http://localhost:8000/api/users').json())
 
-print(post('http://localhost:8000/api/jobs',
-           json={'team_leader': 'Nick',
-                 'job': 'do home work',
-                 'work_size': 150,
-                 'collaborators': "1, 3, 4",
-                 'is_finished': False}).json())
+print(post('http://localhost:8000/api/users',
+           json={'address': 'module_1',
+                 'age': 12,
+                 'email': 'scott_chief@mars.com',
+                 'hashed_password': None,
+                 'id': 1,
+                 'modified_date': None,
+                 'name': 'Rid',
+                 'position': 'capt',
+                 'speciality': 'research engineer',
+                 'surname': 'Sctt'}).json())
 
-print(get('http://localhost:8000/api/jobs').json())
+print(get('http://localhost:8000/api/users').json())
 
-print(delete('http://localhost:8000/api/jobs/5').json())
+print(put('http://localhost:8000/api/users/1',
+          json={'address': 'module_1',
+                'age': 56,
+                'email': 'scott_chief@mars.com',
+                'hashed_password': None,
+                'id': 1,
+                'modified_date': None,
+                'name': 'Ridley',
+                'position': 'captain',
+                'speciality': 'research engineer',
+                'surname': 'Scott'}).json())
 
-print(delete('http://localhost:8000/api/jobs/77').json())
-
-print(delete('http://localhost:8000/api/jobs/3').json())
-
-print(delete('http://localhost:8000/api/jobs/4').json())
-
-print(get('http://localhost:8000/api/jobs').json())
+print(get('http://localhost:8000/api/users').json())
