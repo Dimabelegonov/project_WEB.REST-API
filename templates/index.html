@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style="text-align: center">Works log</h1>
+{% for item in jobs%}
+<div class="item col-md6 border rounded">
+    <h2>Action #{{item.id}}</h2>
+
+</div>
+{% endfor %}
+{% endblock %}
