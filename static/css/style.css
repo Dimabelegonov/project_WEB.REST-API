@@ -1,4 +1,13 @@
 .item{
-    margin-top: 15px;
-    padding-top: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+    $table-cell-padding-y:        .5rem;
+}
+
+.purple{
+    background-color:#D8BFD8;
+}
+
+.not-purple{
+    background-color: #DA70D6;
 }

@@ -26,7 +26,11 @@ login_manager.init_app(app)
 def index():
     db_sess = db_session.create_session()
     jobs = db_sess.query(Jobs).all()
-    return render_template("index.html", jobs=jobs)
+    users = db_sess.query(User).all()
+    data = {}
+    for user in users:
+        data[user.id] = user.surname + " " +  user.name
+    return render_template("index.html", jobs=jobs, data=data)
 
 
 @login_manager.user_loader

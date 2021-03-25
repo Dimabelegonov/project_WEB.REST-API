@@ -2,10 +2,40 @@
 
 {% block content %}
 <h1 style="text-align: center">Works log</h1>
-{% for item in jobs%}
-<div class="item col-md6 border rounded">
-    <h2>Action #{{item.id}}</h2>
+<div class="item">
+    <table class="table table-borderless">
+        <tbody>
+            {% for item in jobs%}
+            <thead>
+                <tr class="h2">
+                    <th>Action # {{item.id}}</th>
+                </tr>
+            </thead>
 
+            <tbody style="background-color:#D3D3D3">
+                <tr>
+                    <th scope="col">Title of activity</th>
+                    <th scope="col">Team leader</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col">List of collaborations</th>
+                    <th scope="col">Is finished</th>
+                </tr>
+            </tbody>
+
+            <tr class="purple">
+                  <td>{{item.job}}</td>
+                  <td>{{data[item.team_leader]}}</td>
+                  <td>{{item.work_size}} hours</td>
+                  <td>{{item.collaborators}}</td>
+              {% if item.is_finished %}
+                    <td class="not-purple">Is finished</td>
+              {% else %}
+                    <td class="not-purple">Is not finished</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
 </div>
-{% endfor %}
 {% endblock %}
