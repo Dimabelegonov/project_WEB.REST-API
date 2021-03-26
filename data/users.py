@@ -6,6 +6,7 @@ from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
 
 from data.db_session import SqlAlchemyBase
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -28,3 +29,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     def __repr__(self):
         s = " ".join(["<Colonist>", str(self.id), str(self.surname), str(self.name)])
         return s
+
+    def set_password(self, password):
+        self.hashed_password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.hashed_password, password)
