@@ -2,40 +2,38 @@
 
 {% block content %}
 <h1 style="text-align: center">Works log</h1>
+{% if current_user.is_authenticated %}
+<a class="btn btn-secondary" href="/add_job" role="button" >Добавить работу</a>
+{% endif %}
 <div class="item">
-    <table class="table table-borderless">
-        <tbody>
-            {% for item in jobs%}
-            <thead>
-                <tr class="h2">
-                    <th>Action # {{item.id}}</th>
-                </tr>
-            </thead>
-
-            <tbody style="background-color:#D3D3D3">
-                <tr>
-                    <th scope="col">Title of activity</th>
-                    <th scope="col">Team leader</th>
-                    <th scope="col">Duration</th>
-                    <th scope="col">List of collaborations</th>
-                    <th scope="col">Is finished</th>
-                </tr>
-            </tbody>
-
-            <tr class="purple">
-                  <td>{{item.job}}</td>
-                  <td>{{data[item.team_leader]}}</td>
-                  <td>{{item.work_size}} hours</td>
-                  <td>{{item.collaborators}}</td>
-              {% if item.is_finished %}
-                    <td class="not-purple">Is finished</td>
-              {% else %}
-                    <td class="not-purple">Is not finished</td>
-              {% endif %}
-            </tr>
-            {% endfor %}
-
-        </tbody>
-    </table>
+    {% for item in jobs%}
+    <h2>Action # {{ item.id }}</h2>
+    <div class="table">
+        <div class="row table-secondary align-items-center" style="height:70px">
+            <div class="col-6">Title of activity</div>
+            <div class="col">Team leader</div>
+            <div class="col">Duration</div>
+            <div class="col">List of collaborations</div>
+            <div class="col">Is finished</div>
+        </div>
+        <div class="row align-items-center purple" style="height:50px">
+            <div class="col-6">{{ item.job }}</div>
+            <div class="col">{{ data[item.team_leader] }}</div>
+            <div class="col">{{ item.work_size }}</div>
+            <div class="col">{{ item.collaborators }}</div>
+            {% if item.is_finished %}
+                <div class="col table-success" style="height:50px; padding-top:15px;">Is finished</div>
+            {% else %}
+                <div class="col">Is not finished</div>
+            {% endif %}
+        </div>
+    </div>
+    {% if (current_user.is_authenticated and current_user == item.user) or current_user.id == 5 %}
+    <div>
+        <a class="btn btn-warning" href="/job/{{ item.id }}" role="button" >Изменить</a>
+        <a class="btn btn-danger" href="/job_delete/{{ item.id }}" role="button">Удалить</a>
+    </div>
+    {% endif %}
+    {% endfor %}
 </div>
 {% endblock %}

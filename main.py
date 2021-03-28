@@ -1,9 +1,10 @@
-from flask import Flask, url_for, request, render_template, Blueprint, jsonify, make_response
+from flask import Flask, request, render_template, Blueprint, jsonify, make_response
+from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from forms.user import RegisterForm, LoginForm
-from sqlalchemy_serializer import SerializerMixin
-from flask_login import LoginManager, login_user, login_required, logout_user
+from forms.job_form import AddJobForm
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
@@ -29,8 +30,79 @@ def index():
     users = db_sess.query(User).all()
     data = {}
     for user in users:
-        data[user.id] = user.surname + " " +  user.name
+        data[user.id] = user.surname + " " + user.name
     return render_template("index.html", jobs=jobs, data=data)
+
+
+@app.route('/add_job', methods=['GET', 'POST'])
+def add_job():
+    form = AddJobForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = Jobs(
+            team_leader=form.team_leader.data,
+            job=form.job.data,
+            collaborators=form.collaborators.data,
+            work_size=form.work_size.data,
+            is_finished=form.is_finished.data
+        )
+        db_sess.merge(current_user)
+        db_sess.add(job)
+        db_sess.commit()
+        return redirect('/')
+    form.submit.label.text = "Add job"
+    return render_template('add_jobs.html', title='Adding a Job', form=form)
+
+
+@app.route('/job/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(job_id):
+    form = AddJobForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                         Jobs.team_leader == current_user.id).first()
+        if job:
+            form.team_leader.data = job.user.id
+            form.job.data = job.job
+            form.work_size.data = job.work_size
+            form.collaborators.data = job.collaborators
+            form.is_finished.data = job.is_finished
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                         Jobs.user == current_user
+                                         ).first()
+        if job:
+            job.user.id = form.team_leader.data
+            job.job = form.job.data
+            job.work_size = form.work_size.data
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.is_finished.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    form.submit.label.text = "Edit job"
+    return render_template('add_jobs.html', title="Edit Job", form=form)
+
+
+@app.route('/job_delete/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(job_id):
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == job_id, (
+            (Jobs.user == current_user) | (current_user.id == 5)
+    )).first()
+    print(jobs)
+    if jobs:
+        db_sess.delete(jobs)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
 
 
 @login_manager.user_loader
@@ -267,7 +339,8 @@ def update_user(user_id):
         speciality=user.speciality if "speciality" not in request.json else request.json["speciality"],
         address=user.address if "address" not in request.json else request.json["address"],
         email=user.email if "email" not in request.json else request.json["email"],
-        hashed_password=user.hashed_password if "hashed_password" not in request.json else request.json["hashed_password"],
+        hashed_password=user.hashed_password if "hashed_password" not in request.json else request.json[
+            "hashed_password"],
         modified_date=user.modified_date if "modified_date" not in request.json else request.json["modified_date"],
     )
     db_sess.delete(user)
