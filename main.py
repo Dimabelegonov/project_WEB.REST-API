@@ -360,5 +360,5 @@ if __name__ == '__main__':
     db_session.global_init("db/blogs.db")
     app.register_blueprint(blueprint)
     # app.run(port=8000, host='127.0.0.1')
-    port = int(os.environ.get("POST", 500))
+    port = int(os.environ.get("POST", 5000))
     app.run(post="0.0.0.0", port=port)
